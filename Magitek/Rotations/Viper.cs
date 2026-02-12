@@ -2,6 +2,7 @@
 using Magitek.Extensions;
 using Magitek.Logic.Roles;
 using Magitek.Logic.Viper;
+using Magitek.Models;
 using Magitek.Models.Viper;
 using Magitek.Utilities;
 using Magitek.Utilities.CombatMessages;
@@ -97,6 +98,8 @@ namespace Magitek.Rotations
             if (await SingleTarget.HunterOrSwiftSkinSting()) return true;
             if (await SingleTarget.SteelOrReavingFangs()) return true;
 
+            //CombatMessageOverride.Clear();
+
             return true;
         }
 
@@ -127,43 +130,25 @@ namespace Magitek.Rotations
 
         public static void RegisterCombatMessages()
         {
-            //Highest priority: Don't show anything if we're not in combat
+
+            // 100: Don't show anything if we're not in combat / no target
             CombatMessageManager.RegisterMessageStrategy(
                 new CombatMessageStrategy(100,
                                           "",
                                           () => !Core.Me.InCombat || !Core.Me.HasTarget)
-                );
+            );
 
-            //Second priority: Don't show anything if positional requirements are Nulled
+            // 200: Don't show anything if positionals are nulled
             CombatMessageManager.RegisterMessageStrategy(
                 new CombatMessageStrategy(200,
                                           "",
-                                          () => ViperSettings.Instance.HidePositionalMessage || Core.Me.HasAura(Auras.TrueNorth) || Core.Me.HasAura(Auras.Reawakened) || ViperSettings.Instance.EnemyIsOmni)
-                );
+                                          () => ViperSettings.Instance.HidePositionalMessage
+                                             || Core.Me.HasAura(Auras.TrueNorth)
+                                             || Core.Me.HasAura(Auras.Reawakened)
+                                             || ViperSettings.Instance.EnemyIsOmni)
+            );
 
-            CombatMessageManager.RegisterMessageStrategy(
-                new CombatMessageStrategy(300,
-                                          "Fanksting Strike: Side of Enemy", "/Magitek;component/Resources/Images/General/ArrowSidesHighlighted.png",
-                                          () => Core.Me.HasAura(Auras.FlankstungVenom) && (Casting.LastSpell == Spells.HunterSting || Casting.LastSpell == Spells.SwiftskinSting)
-            ));
-
-            CombatMessageManager.RegisterMessageStrategy(
-               new CombatMessageStrategy(300,
-                                         "Fanksbane Fang: Side of Enemy", "/Magitek;component/Resources/Images/General/ArrowSidesHighlighted.png",
-                                         () => Core.Me.HasAura(Auras.FlanksbaneVenom) && (Casting.LastSpell == Spells.HunterSting || Casting.LastSpell == Spells.SwiftskinSting)
-           ));
-
-            CombatMessageManager.RegisterMessageStrategy(
-                new CombatMessageStrategy(300,
-                                          "Hindsting Strike: Get behind Enemy", "/Magitek;component/Resources/Images/General/ArrowDownHighlighted.png",
-                                          () => Core.Me.HasAura(Auras.HindstungVenom) && (Casting.LastSpell == Spells.HunterSting || Casting.LastSpell == Spells.SwiftskinSting)
-            ));
-
-            CombatMessageManager.RegisterMessageStrategy(
-               new CombatMessageStrategy(300,
-                                         "Hindsbane Fang: Get behind Enemy", "/Magitek;component/Resources/Images/General/ArrowDownHighlighted.png",
-                                         () => Core.Me.HasAura(Auras.HindsbaneVenom) && (Casting.LastSpell == Spells.HunterSting || Casting.LastSpell == Spells.SwiftskinSting)
-           ));
+            CombatMessageManager.RegisterMessageStrategy(new OverrideCombatMessageStrategy(300));
 
         }
     }

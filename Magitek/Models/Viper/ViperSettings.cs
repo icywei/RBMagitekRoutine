@@ -42,11 +42,15 @@ namespace Magitek.Models.Viper
         public int DontReawakenIfEnemyDyingWithinSeconds { get; set; }
 
         [Setting]
+        [DefaultValue(40)]
+        public int DontReawakenIfSerpentIreReadyWithinSeconds { get; set; }
+
+        [Setting]
         [DefaultValue(true)]
         public bool UseUncoiledFury { get; set; }
 
         [Setting]
-        [DefaultValue(1)]
+        [DefaultValue(0)]
         public int UncoiledFurySaveChrages { get; set; }
 
         [Setting]

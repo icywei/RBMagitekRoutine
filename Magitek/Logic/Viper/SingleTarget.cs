@@ -6,6 +6,7 @@ using Magitek.Extensions;
 using Magitek.Logic.Roles;
 using Magitek.Models.Viper;
 using Magitek.Utilities;
+using Magitek.Utilities.CombatMessages;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -70,20 +71,36 @@ namespace Magitek.Logic.Viper
             if (Core.Me.HasAura(Auras.Reawakened, true))
                 return false;
 
-            if (Core.Me.HasAura(Auras.FlankstungVenom, true))
+            if (Core.Me.HasAura(Auras.FlankstungVenom, true)) 
+            { 
+                CombatMessageOverride.Set("Fanksting Strike: Side of Enemy","/Magitek;component/Resources/Images/General/ArrowSidesHighlighted.png");
                 return await Spells.FankstingStrike.Cast(Core.Me.CurrentTarget);
+            }
 
             if (Core.Me.HasAura(Auras.FlanksbaneVenom, true))
+            {
+                CombatMessageOverride.Set("FanksbaneFang Strike: Side of Enemy", "/Magitek;component/Resources/Images/General/ArrowSidesHighlighted.png");
                 return await Spells.FanksbaneFang.Cast(Core.Me.CurrentTarget);
+            }
 
             if (Core.Me.HasAura(Auras.HindstungVenom, true))
+            {
+                CombatMessageOverride.Set("Hindsting Strike: Get behind Enemy","/Magitek;component/Resources/Images/General/ArrowDownHighlighted.png" );
                 return await Spells.HindstingStrike.Cast(Core.Me.CurrentTarget);
+            }
+
 
             if (Core.Me.HasAura(Auras.HindsbaneVenom, true))
+            {
+                CombatMessageOverride.Set("HindsbaneFang Strike: Get behind Enemy", "/Magitek;component/Resources/Images/General/ArrowDownHighlighted.png");
                 return await Spells.HindsbaneFang.Cast(Core.Me.CurrentTarget);
-
+            }
             else
+            {
+                CombatMessageOverride.Set("Fanksting Strike: Side of Enemy", "/Magitek;component/Resources/Images/General/ArrowSidesHighlighted.png");
                 return await Spells.FankstingStrike.Cast(Core.Me.CurrentTarget);
+            }
+
         }
 
         public static async Task<bool> Vicewinder()
@@ -150,6 +167,9 @@ namespace Magitek.Logic.Viper
             if (ActionResourceManager.Viper.RattlingCoils == 3 && UncoiledFuryCap())
                 return await Spells.UncoiledFury.Cast(Core.Me.CurrentTarget);
 
+            if (ActionResourceManager.Viper.RattlingCoils <= ViperSettings.Instance.UncoiledFurySaveChrages)
+                return false;
+
             //Cast at range 
             if (ViperRoutine.EnemiesAroundPlayer5Yards == 0)
                 return await Spells.UncoiledFury.Cast(Core.Me.CurrentTarget);
@@ -214,7 +234,7 @@ namespace Magitek.Logic.Viper
             if (ActionResourceManager.Viper.SerpentsOffering == 100 && (!Spells.SerpentIre.IsKnown() || Spells.SerpentIre.Cooldown > TimeSpan.FromSeconds(10)))
                 return await Spells.Reawaken.Cast(Core.Me.CurrentTarget);
 
-            if (Spells.SerpentIre.IsKnownAndReady(40000))
+            if (Spells.SerpentIre.IsKnownAndReady(ViperSettings.Instance.DontReawakenIfSerpentIreReadyWithinSeconds))
                     return false;
 
             if (!CanReawaken(Core.Me.CurrentTarget))

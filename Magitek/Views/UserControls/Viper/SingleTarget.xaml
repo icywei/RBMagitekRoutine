@@ -56,17 +56,23 @@
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Margin="5" Content="{x:Static properties:Resources.Viper_Content_Enable_UncoiledFury}" IsChecked="{Binding ViperSettings.UseUncoiledFury, Mode=TwoWay}" Style="{DynamicResource CheckBoxFlat}" />
                     <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{x:Static properties:Resources.Viper_Text_and_save_at_least}" />
-                    <controls:Numeric MaxValue="2" MinValue="0"
+                    <controls:Numeric MaxValue="3" MinValue="0"
                   Value="{Binding ViperSettings.UncoiledFurySaveChrages, Mode=TwoWay}" />
-                    <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{x:Static properties:Resources.Viper_Text_charges_when_out_of_range}" />
+                        <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{x:Static properties:Resources.Viper_Text_charges_for_manual_cast}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
                     <CheckBox Margin="5" Content="{x:Static properties:Resources.Viper_Content_Enable_Reawaken}" IsChecked="{Binding ViperSettings.UseReawaken, Mode=TwoWay}" Style="{DynamicResource CheckBoxFlat}" />
-                    <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{x:Static properties:Resources.Text_but_do_Not_Use_If_Enemy_Is_Dying_Within}" />
-                    <controls:Numeric  MaxValue="100" MinValue="1" Value="{Binding ViperSettings.DontReawakenIfEnemyDyingWithinSeconds, Mode=TwoWay}" />
+                        <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{x:Static properties:Resources.Text_but_do_Not_Use_If_Serpent_Ire_Ready_Within}" />
+                        <controls:Numeric  MaxValue="100" MinValue="1" Value="{Binding ViperSettings.DontReawakenIfSerpentIreReadyWithinSeconds, Mode=TwoWay}" />
                     <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{x:Static properties:Resources.Generic_Seconds}" />
                 </StackPanel>
-                <StackPanel Orientation="Horizontal">
+                    <StackPanel Orientation="Horizontal">
+                        <CheckBox Margin="5" Content="{x:Static properties:Resources.Viper_Content_Enable_Reawaken}" IsChecked="{Binding ViperSettings.UseReawaken, Mode=TwoWay}" Style="{DynamicResource CheckBoxFlat}" />
+                        <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{x:Static properties:Resources.Text_but_do_Not_Use_If_Enemy_Is_Dying_Within}" />
+                        <controls:Numeric  MaxValue="60" MinValue="30" Value="{Binding ViperSettings.DontReawakenIfEnemyDyingWithinSeconds, Mode=TwoWay}" />
+                        <TextBlock Style="{DynamicResource TextBlockDefault}" Text="{x:Static properties:Resources.Generic_Seconds}" />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
                    
                     <CheckBox Margin="5" Content="{x:Static properties:Resources.Viper_Content_Enable_Last_Lash}" IsChecked="{Binding ViperSettings.UseLastLash, Mode=TwoWay}" Style="{DynamicResource CheckBoxFlat}" />
                 </StackPanel>

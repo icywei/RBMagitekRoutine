@@ -91,9 +91,6 @@ namespace Magitek.Logic.Viper
             if (!ViperSettings.Instance.UseSerpentIre || ViperSettings.Instance.BurstLogicHoldBurst)
                 return false;
 
-            if (!Core.Me.HasAura(Auras.Swiftscaled, true))
-                return false;
-
             return await Spells.SerpentIre.Cast(Core.Me);
 
         }

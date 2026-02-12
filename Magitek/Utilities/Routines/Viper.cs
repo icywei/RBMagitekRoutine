@@ -1,5 +1,6 @@
 ﻿using ff14bot;
 using ff14bot.Enums;
+using Magitek.Extensions;
 using System.Linq;
 
 namespace Magitek.Utilities.Routines
@@ -16,6 +17,17 @@ namespace Magitek.Utilities.Routines
                 return;
 
             EnemiesAroundPlayer5Yards = Combat.Enemies.Count(r => r.Distance(Core.Me) <= 5 + r.CombatReach);
+        }
+
+        public static bool inCombo()
+        {
+            if (Spells.HunterCoil.IsKnownAndReadyAndCastable() || Spells.SwiftskinCoil.IsKnownAndReadyAndCastable())
+                return true;
+
+            if (Core.Me.HasAura(Auras.Reawakened, true))
+                return true;
+
+            return false;
         }
     }
 }

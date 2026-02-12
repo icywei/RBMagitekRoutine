@@ -1,3 +1,4 @@
+using Clio.Utilities.Collections;
 using ff14bot;
 using ff14bot.Managers;
 using ff14bot.Objects;
@@ -5,6 +6,7 @@ using Magitek.Extensions;
 using Magitek.Logic.Roles;
 using Magitek.Models.Viper;
 using Magitek.Utilities;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Auras = Magitek.Utilities.Auras;
@@ -135,20 +137,61 @@ namespace Magitek.Logic.Viper
             if (!ViperSettings.Instance.UseUncoiledFury)
                 return false;
 
+            if (ActionResourceManager.Viper.RattlingCoils == 0)
+                return false;
+
             if (Core.Me.HasAura(Auras.HunterVenom, true) || Core.Me.HasAura(Auras.SwiftskinVenom, true))
                 return false;
 
+            if (ViperRoutine.inCombo())
+                return false;
+
+            //Cast right before cap
+            if (ActionResourceManager.Viper.RattlingCoils == 3 && UncoiledFuryCap())
+                return await Spells.UncoiledFury.Cast(Core.Me.CurrentTarget);
+
+            //Cast at range 
             if (ViperRoutine.EnemiesAroundPlayer5Yards == 0)
                 return await Spells.UncoiledFury.Cast(Core.Me.CurrentTarget);
 
-            if (!Spells.UncoiledFury.CanCast() || ActionResourceManager.Viper.RattlingCoils <= ViperSettings.Instance.UncoiledFurySaveChrages)
-                return false;
+            return false;
 
-            if (Spells.Reawaken.IsKnownAndReadyAndCastable(1000) || Spells.HunterCoil.IsKnownAndReadyAndCastable() || Spells.SwiftskinCoil.IsKnownAndReadyAndCastable())
-                return false;
+        }
 
-            return await Spells.UncoiledFury.Cast(Core.Me.CurrentTarget);
+        public static bool UncoiledFuryCap()
+        {
+            // If Ire is basically ready, dumping before you press it avoids coil waste
+            if (Spells.SerpentIre.IsKnown() && Spells.SerpentIre.CanCast() && Spells.SerpentIre.Cooldown <= TimeSpan.FromSeconds(2))
+                return true;
 
+            // Vicewinder generator - MUST mirror your Vicewinder() gating (otherwise false positives)
+            bool vicewinderSoon =
+                ViperSettings.Instance.UseVicewinder &&
+                Spells.Vicewinder.IsKnown() &&
+                Spells.Vicewinder.CanCast() &&
+                Core.Me.HasAura(Auras.Swiftscaled, true) &&
+                !Core.Me.HasAura(Auras.Reawakened, true) &&
+                !Core.Me.HasAura(Auras.HunterVenom, true) &&
+                !Core.Me.HasAura(Auras.SwiftskinVenom, true) &&
+                !Core.Me.HasAura(Auras.PoisedforTwinfang, true) &&
+                !Core.Me.HasAura(Auras.PoisedforTwinblood, true);
+
+            if (vicewinderSoon)
+                return true;
+
+            // Vicepit generator (AoE) - mirror your AoE gating
+            bool vicepitSoon =
+                ViperSettings.Instance.UseAoe &&
+                ViperSettings.Instance.UseVicepit &&
+                ViperRoutine.EnemiesAroundPlayer5Yards >= ViperSettings.Instance.AoeEnemies &&
+                Spells.Vicepit.IsKnown() &&
+                Spells.Vicepit.CanCast() &&
+                !Core.Me.HasAura(Auras.Reawakened, true);
+
+            if (vicepitSoon)
+                return true;
+
+            return false;
         }
 
         public static async Task<bool> Reawaken()
@@ -159,17 +202,20 @@ namespace Magitek.Logic.Viper
             if (!ViperSettings.Instance.UseReawaken || ViperSettings.Instance.BurstLogicHoldBurst)
                 return false;
 
-            if (!Spells.Reawaken.CanCast())
+            if (!Core.Me.HasAura(Auras.ReadytoReawaken, true) && ActionResourceManager.Viper.SerpentsOffering < 50)
                 return false;
 
-            if (!Core.Me.HasAura(Auras.Swiftscaled, true) || !Core.Me.HasAura(Auras.HunterInstinct, true))
+            if (!Core.Me.HasAura(Auras.Swiftscaled, true, 10000) || !Core.Me.HasAura(Auras.HunterInstinct, true, 10000))
                 return false;
 
-            if (Spells.HunterCoil.IsKnownAndReadyAndCastable() || Spells.SwiftskinCoil.IsKnownAndReadyAndCastable())
+            if (ViperRoutine.inCombo())
                 return false;
 
-            if (Spells.SerpentIre.IsKnownAndReady(30000))
-                return false;
+            if (ActionResourceManager.Viper.SerpentsOffering == 100 && (!Spells.SerpentIre.IsKnown() || Spells.SerpentIre.Cooldown > TimeSpan.FromSeconds(10)))
+                return await Spells.Reawaken.Cast(Core.Me.CurrentTarget);
+
+            if (Spells.SerpentIre.IsKnownAndReady(40000))
+                    return false;
 
             if (!CanReawaken(Core.Me.CurrentTarget))
                 return false;
@@ -185,6 +231,8 @@ namespace Magitek.Logic.Viper
 
             return unit.CombatTimeLeft() >= ViperSettings.Instance.DontReawakenIfEnemyDyingWithinSeconds;
         }
+
+
 
         public static async Task<bool> Ouroboros()
         {

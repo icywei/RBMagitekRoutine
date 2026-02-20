@@ -13,7 +13,7 @@ namespace Magitek.Utilities.CombatMessages
         public static string Message => _message;
         public static string ImageSource => _image;
 
-        public static void Set(string message, string imageSource, int durationMs = 900)
+        public static void Set(string message, string imageSource, int durationMs = 4000)
         {
             _message = message;
             _image = imageSource;

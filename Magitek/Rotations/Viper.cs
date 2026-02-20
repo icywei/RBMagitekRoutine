@@ -72,6 +72,8 @@ namespace Magitek.Rotations
 
             }
 
+            if (await SingleTarget.FankstingOrFlankbane()) return true;
+
             if (await Cooldown.TwinBiteCombo()) return true;
             if (await Cooldown.TwinThreshCombo()) return true;
             if (await Cooldown.UncoiledTwinCombo()) return true;
@@ -94,7 +96,7 @@ namespace Magitek.Rotations
 
             if (await SingleTarget.HunterOrSwiftskinCoil()) return true;
             if (await SingleTarget.Vicewinder()) return true;
-            if (await SingleTarget.FankstingOrFlankbane()) return true;
+            //if (await SingleTarget.FankstingOrFlankbane()) return true;
             if (await SingleTarget.HunterOrSwiftSkinSting()) return true;
             if (await SingleTarget.SteelOrReavingFangs()) return true;
 

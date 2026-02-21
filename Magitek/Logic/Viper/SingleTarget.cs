@@ -35,7 +35,7 @@ namespace Magitek.Logic.Viper
             if (Spells.ReavingFangs.IsKnown() && Core.Me.HasAura(Auras.HonedReavers, true))
                 return await Spells.ReavingFangs.Cast(Core.Me.CurrentTarget);
 
-            return await Spells.SteelFangs.Cast(Core.Me.CurrentTarget);
+            return await Spells.ReavingFangs.Cast(Core.Me.CurrentTarget);
         }
 
         public static async Task<bool> HunterOrSwiftSkinSting()
@@ -108,6 +108,9 @@ namespace Magitek.Logic.Viper
             if (Core.Me.HasAura(Auras.Reawakened, true))
                 return false;
 
+            if (Spells.Vicewinder.IsKnown() && Spells.Vicewinder.Charges >= 1)
+                return false;
+
             if (Core.Me.HasAura(Auras.FlankstungVenom, true)) 
             { 
                 return await Spells.FankstingStrike.Cast(Core.Me.CurrentTarget);
@@ -123,16 +126,13 @@ namespace Magitek.Logic.Viper
                 return await Spells.HindstingStrike.Cast(Core.Me.CurrentTarget);
             }
 
-
             if (Core.Me.HasAura(Auras.HindsbaneVenom, true))
             {
                 return await Spells.HindsbaneFang.Cast(Core.Me.CurrentTarget);
             }
-            else
-            {
-                return await Spells.FankstingStrike.Cast(Core.Me.CurrentTarget);
-            }
 
+            return await Spells.HindstingStrike.Cast(Core.Me.CurrentTarget);
+            
         }
 
         public static async Task<bool> Vicewinder()
@@ -282,7 +282,7 @@ namespace Magitek.Logic.Viper
             if (!Core.Me.HasAura(Auras.ReadytoReawaken, true) && ActionResourceManager.Viper.SerpentsOffering < 50)
                 return false;
 
-            if (!Core.Me.HasAura(Auras.Swiftscaled, true, 10000) || !Core.Me.HasAura(Auras.HunterInstinct, true, 10000))
+            if (!Core.Me.HasAura(Auras.Swiftscaled, true, 6000) || !Core.Me.HasAura(Auras.HunterInstinct, true, 6000))
                 return false;
 
             if (ViperRoutine.inCombo())

@@ -25,6 +25,9 @@ namespace Magitek.Logic.Viper
             if (!Core.Me.CurrentTarget.WithinSpellRange(Spells.DeathRattle.Range))
                 return false;
 
+            if(Spells.Vicewinder.IsKnown() && Spells.Vicewinder.Charges >= 1)
+                return false;
+
             return await Spells.DeathRattle.Cast(Core.Me.CurrentTarget);
         }
 
@@ -49,10 +52,12 @@ namespace Magitek.Logic.Viper
                 return false;
 
             if (Spells.TwinfangBite.IsKnown() && Core.Me.HasAura(Auras.HunterVenom, true))
-                return await Spells.TwinfangBite.Cast(Core.Me.CurrentTarget);
+               if (await Spells.TwinfangBite.Cast(Core.Me.CurrentTarget))
+                    return await Spells.TwinbloodBite.Cast(Core.Me.CurrentTarget);
 
             if (Spells.TwinbloodBite.IsKnown() && Core.Me.HasAura(Auras.SwiftskinVenom, true))
-                return await Spells.TwinbloodBite.Cast(Core.Me.CurrentTarget);
+                if (await Spells.TwinbloodBite.Cast(Core.Me.CurrentTarget))
+                     return await Spells.TwinfangBite.Cast(Core.Me.CurrentTarget);
 
             return false;
         }
@@ -63,10 +68,12 @@ namespace Magitek.Logic.Viper
                 return false;
 
             if (Spells.TwinfangThresh.IsKnown() && Core.Me.HasAura(Auras.FellhunterVenom, true))
-                return await Spells.TwinfangThresh.Cast(Core.Me);
+                if( await Spells.TwinfangThresh.Cast(Core.Me))
+                    return await Spells.TwinbloodThresh.Cast(Core.Me);
 
             if (Spells.TwinbloodThresh.IsKnown() && Core.Me.HasAura(Auras.FellskinVenom, true))
-                return await Spells.TwinbloodThresh.Cast(Core.Me);
+                if( await Spells.TwinbloodThresh.Cast(Core.Me))
+                    return await Spells.TwinfangThresh.Cast(Core.Me);
 
             return false;
         }
@@ -75,10 +82,12 @@ namespace Magitek.Logic.Viper
         {
 
             if (Spells.UncoiledTwinfang.IsKnown() && Core.Me.HasAura(Auras.PoisedforTwinfang, true))
-                return await Spells.UncoiledTwinfang.Cast(Core.Me.CurrentTarget);
+                if( await Spells.UncoiledTwinfang.Cast(Core.Me.CurrentTarget))
+                    return await Spells.UncoiledTwinblood.Cast(Core.Me.CurrentTarget);
 
             if (Spells.UncoiledTwinblood.IsKnown() && Core.Me.HasAura(Auras.PoisedforTwinblood, true))
-                return await Spells.UncoiledTwinblood.Cast(Core.Me.CurrentTarget);
+                if( await Spells.UncoiledTwinblood.Cast(Core.Me.CurrentTarget))
+                    return await Spells.UncoiledTwinfang.Cast(Core.Me.CurrentTarget);
 
             return false;
         }

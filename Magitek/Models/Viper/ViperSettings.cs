@@ -42,7 +42,7 @@ namespace Magitek.Models.Viper
         public int DontReawakenIfEnemyDyingWithinSeconds { get; set; }
 
         [Setting]
-        [DefaultValue(40)]
+        [DefaultValue(50)]
         public int DontReawakenIfSerpentIreReadyWithinSeconds { get; set; }
 
         [Setting]

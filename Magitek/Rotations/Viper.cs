@@ -68,7 +68,6 @@ namespace Magitek.Rotations
                 if (await Cooldown.SerpentIre()) return true;
 
                 if (await Cooldown.LastLash()) return true;
-                if (await Cooldown.DeathRattle()) return true;
 
             }
 
@@ -87,6 +86,7 @@ namespace Magitek.Rotations
             if (await SingleTarget.FirstGeneration()) return true;
 
             if (await SingleTarget.Reawaken()) return true;
+            if (await Cooldown.DeathRattle()) return true;
 
             if (await AoE.HunterOrSwiftskinDen()) return true;
             if (await AoE.Vicepit()) return true;
